@@ -510,7 +510,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  GetBitsFromScreen(&x:=0, &y:=0, &w:=0, &h:=0  , ScreenShot:=1, &zx:="", &zy:="", &zw:="", &zh:="")
 	  {
-	  ; REMOVED:   local
 		static CAPTUREBLT:=""
 		(!IsObject(this.bits) && this.bits:=[]), bits:=this.bits
 		if (!ScreenShot and bits.Scan0)
@@ -606,7 +605,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  PicInfo(text)
 	  {
-	  ; REMOVED:   local
 		static info:=Map()
 		if !InStr(text, "$")
 		  return
@@ -698,8 +696,7 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  GetBitmapWH(hBM, &w, &h)
 	  {
-	  ; REMOVED:   local
-		bm := Buffer(size:=(A_PtrSize=8 ? 32:24), 0) ; V1toV2: if 'bm' is a UTF-16 string, use 'VarSetStrCapacity(&bm, size:=(A_PtrSize=8 ? 32:24))'
+		bm := Buffer(size:=(A_PtrSize=8 ? 32:24), 0)
 		r:=DllCall("GetObject", "Ptr", hBM, "int", size, "Ptr", bm)
 		w:=NumGet(bm, 4, "int"), h:=Abs(NumGet(bm, 8, "int"))
 		return r
@@ -707,7 +704,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  CopyHBM(hBM1, x1, y1, hBM2, x2, y2, w2, h2)
 	  {
-	  ; REMOVED:   local
 		if (w2<1 or h2<1 or !hBM1 or !hBM2)
 		  return
 		mDC1:=DllCall("CreateCompatibleDC", "Ptr", 0, "Ptr")
@@ -723,7 +719,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  CopyBits(Scan01,Stride1,x1,y1,Scan02,Stride2,x2,y2,w2,h2,Reverse:=0)
 	  {
-	  ; REMOVED:   local
 		if (w2<1 or h2<1 or !Scan01 or !Scan02)
 		  return
 		p1:=Scan01+(y1-1)*Stride1+x1*4  
@@ -775,7 +770,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  CaptureCursor(hDC:=0, zx:=0, zy:=0, zw:=0, zh:=0, get_cursor:=0)
 	  {
-	  ; REMOVED:   local
 		if (get_cursor)
 		  return this.Cursor
 		if (hDC=1 or hDC=0) and (zw=0)
@@ -783,7 +777,7 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  this.Cursor:=hDC
 		  return
 		}
-		mi := Buffer(40, 0), NumPut("int", 16+A_PtrSize, mi) ; V1toV2: if 'mi' is a UTF-16 string, use 'VarSetStrCapacity(&mi, 40)'
+		mi := Buffer(40, 0), NumPut("int", 16+A_PtrSize, mi)
 		DllCall("GetCursorInfo", "Ptr", mi)
 		bShow   := NumGet(mi, 4, "int")
 		hCursor := NumGet(mi, 8, "Ptr")
@@ -791,7 +785,7 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		y := NumGet(mi, 12+A_PtrSize, "int")
 		if (!bShow) or (x<zx or y<zy or x>=zx+zw or y>=zy+zh)
 		  return
-		ni := Buffer(40, 0) ; V1toV2: if 'ni' is a UTF-16 string, use 'VarSetStrCapacity(&ni, 40)'
+		ni := Buffer(40, 0)
 		DllCall("GetIconInfo", "Ptr", hCursor, "Ptr", ni)
 		xCenter  := NumGet(ni, 4, "int")
 		yCenter  := NumGet(ni, 8, "int")
@@ -812,10 +806,8 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  base64tobit(s)
 	  {
-	  ; REMOVED:   local
 		Chars:="0123456789+/ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		. "abcdefghijklmnopqrstuvwxyz"
-	  ; REMOVED:   SetFormat, IntegerFast, d
 		Loop Parse, Chars
 		{
 		  s:=RegExReplace(s, "[" A_LoopField "]", ((i:=A_Index-1)>>5&1) . (i>>4&1)
@@ -850,7 +842,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  ASCII(s)
 	  {
-	  ; REMOVED:   local
 		if RegExMatch(s, "\$(\d+)\.([\w+/]+)", &r)
 		{
 		  s:=RegExReplace(this.base64tobit(r[2]), ".{" r[1] "}", "$0`n")
@@ -866,7 +857,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  PicLib(comments, add_to_Lib:=0, index:=1)
 	  {
-	  ; REMOVED:   local
 		Lib:=this.Lib
 		, (!Lib.Has(index) && Lib[index]:=Map()), Lib:=Lib[index]
 		if (add_to_Lib)
@@ -908,7 +898,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  PicX(Text)
 	  {
-	  ; REMOVED:   local
 		if !RegExMatch(Text, "(<[^$\n]+)\$(\d+)\.([\w+/]+)", &r)
 		  return Text
 		v:=this.base64tobit(r[3]), Text:=""
@@ -942,7 +931,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  GetColor(x, y, fmt:=1)
 	  {
-	  ; REMOVED:   local
 		bits:=this.GetBitsFromScreen(&null:=0,&null:=0,&null:=0,&null:=0,0,&zx,&zy,&zw,&zh)  , c:=(x<zx or x>=zx+zw or y<zy or y>=zy+zh or !bits.Scan0)
 		? 0xFFFFFF : NumGet(bits.Scan0+(y-zy)*bits.Stride+(x-zx)*4, "uint")
 		return (fmt ? Format("0x{:06X}",c&0xFFFFFF) : c)
@@ -952,7 +940,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  SetColor(x, y, color:=0x000000)
 	  {
-	  ; REMOVED:   local
 		bits:=this.GetBitsFromScreen(&null:=0,&null:=0,&null:=0,&null:=0,0,&zx,&zy,&zw,&zh)
 		if !(x<zx or x>=zx+zw or y<zy or y>=zy+zh or !bits.Scan0)
 		  NumPut("uint", color, bits.Scan0+(y-zy)*bits.Stride+(x-zx)*4)
@@ -968,7 +955,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  Ocr(ok, offsetX:=20, offsetY:=20, overlapW:=0)
 	  {
-	  ; REMOVED:   local
 		ocr_Text:=ocr_X:=min_X:="",ocr_Y:=min_Y:=max_Y:=dx:=0
 		For k,v in ok
 		  x:=v.x, y:=v.y
@@ -1009,13 +995,12 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  Sort(ok, dy:=10)
 	  {
-	  ; REMOVED:   local
 		if !IsObject(ok)
 		  return ok
 		s:="", n:=150000, ypos:=[]
 		For k,v in ok
 		{
-		  x:=v.x, y:=v.y, add:=1
+		  x:=v.mx, y:=v.my, add:=1
 		  For k1,v1 in ypos
 		  if Abs(y-v1)<=dy
 		  {
@@ -1030,7 +1015,7 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		s := Sort(s, "N D|")
 		ok2:=[]
 		Loop Parse, s, "|"
-		  ok2.Push( ok[(StrSplit(A_LoopField,".")[2])] )
+		  ok2.Push(ok[(StrSplit(A_LoopField,".")[2])])
 		return ok2
 	  }
   
@@ -1038,12 +1023,11 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  Sort2(ok, px, py)
 	  {
-	  ; REMOVED:   local
 		if !IsObject(ok)
 		  return ok
 		s:=""
 		For k,v in ok
-		  s.=((v.x-px)**2+(v.y-py)**2) "." k "|"
+		  s.=((v.mx-px)**2+(v.my-py)**2) "." k "|"
 		s:=Trim(s,"|")
 		s := Sort(s, "N D|")
 		ok2:=[]
@@ -1056,12 +1040,11 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  Sort3(ok, dir:=1)
 	  {
-	  ; REMOVED:   local
 		if !IsObject(ok)
 		  return ok
 		s:="", n:=150000
 		For k,v in ok
-		  x:=v[1], y:=v[2]
+		  x:=v.x, y:=v.y
 		  , s.=(dir=1 ? y*n+x
 		  : dir=2 ? y*n-x
 		  : dir=3 ? -y*n+x
@@ -1082,10 +1065,9 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  MouseTip(x:="", y:="", w:=10, h:=10, d:=4)
 	  {
-	  ; REMOVED:   local
 		if (x="")
 		{
-		  pt := Buffer(16, 0), DllCall("GetCursorPos", "ptr", pt) ; V1toV2: if 'pt' is a UTF-16 string, use 'VarSetStrCapacity(&pt, 16)'
+		  pt := Buffer(16, 0), DllCall("GetCursorPos", "ptr", pt)
 		  x:=NumGet(pt, 0, "uint"), y:=NumGet(pt, 4, "uint")
 		}
 		Loop 4
@@ -1214,7 +1196,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  SavePic(file, x1:=0, y1:=0, x2:=0, y2:=0, ScreenShot:=1)
 	  {
-	  ; REMOVED:   local
 		if (x1*x1+y1*y1+x2*x2+y2*y2<=0)
 		  n:=150000, x:=y:=-n, w:=h:=2*n
 		else
@@ -1238,7 +1219,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  ShowPic(file:="", show:=1, &x:="", &y:="", &w:="", &h:="")
 	  {
-	  ; REMOVED:   local
 		if (file="")
 		{
 		  this.ShowScreenShot()
@@ -1266,7 +1246,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  ShowScreenShot(x1:=0, y1:=0, x2:=0, y2:=0, ScreenShot:=1)
 	  {
-	  ; REMOVED:   local
 		static hPic, oldw, oldh
 		if (x1*x1+y1*y1+x2*x2+y2*y2<=0)
 		{
@@ -1313,7 +1292,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  WaitChange(time:=-1, x1:=0, y1:=0, x2:=0, y2:=0)
 	  {
-	  ; REMOVED:   local
 		hash:=this.GetPicHash(x1, y1, x2, y2, 0)
 		timeout:=A_TickCount+Round(time*1000)
 		Loop
@@ -1329,7 +1307,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  GetPicHash(x1:=0, y1:=0, x2:=0, y2:=0, ScreenShot:=1)
 	  {
-	  ; REMOVED:   local
 		static h:=DllCall("LoadLibrary", "Str", "ntdll", "Ptr")
 		if (x1*x1+y1*y1+x2*x2+y2*y2<=0)
 		  n:=150000, x:=y:=-n, w:=h:=2*n
@@ -1344,22 +1321,19 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		return hash
 	  }
   
-	  WindowToScreen(&x, &y, x1, y1, id:="")
+	  WindowToScreen(&x, &y, x1, y1, id:="A")
 	  {
-	  ; REMOVED:   local
-		WinGetPos(&winx, &winy, , , id ? "ahk_id " id : "A")
+		WinGetPos(&winx, &winy, , , id)
 		x:=x1+Floor(winx), y:=y1+Floor(winy)
 	  }
   
 	  ScreenToWindow(&x, &y, x1, y1, id:="")
 	  {
-	  ; REMOVED:   local
 		this.WindowToScreen(&dx,&dy,0,0,id), x:=x1-dx, y:=y1-dy
 	  }
   
 	  ClientToScreen(&x, &y, x1, y1, id:="")
 	  {
-	  ; REMOVED:   local
 		if (!id)
 		  id := WinGetID("A")
 		pt := Buffer(8, 0), NumPut("int64", 0, pt)  
@@ -1369,7 +1343,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  ScreenToClient(&x, &y, x1, y1, id:="")
 	  {
-	  ; REMOVED:   local
 		this.ClientToScreen(&dx,&dy,0,0,id), x:=x1-dx, y:=y1-dy
 	  }
   
@@ -1402,20 +1375,12 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  Click(x:="", y:="", other:="")
 	  {
-	  ; REMOVED:   local
 		bak:=A_CoordModeMouse
 		CoordMode("Mouse", "Screen")
 		MouseMove(x, y, 0)
-		Click(x ", " y ", " other)
+		Click(x " " y " " other)
 		CoordMode("Mouse", bak)
 	  }
-
-	  PrintObject(arr) {
-		ret := ""
-		for k, v in arr
-			ret .= "Key: " k " Value: " (IsObject(v)?this.PrintObject(v):v) "`n"
-		return ret
-	}	  
 
 	  ; running AHK code dynamically with new threads
   
@@ -1438,7 +1403,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		}
 		Exec(s, Ahk:="", args:="")
 		{
-	  ; REMOVED:     local
 		  Ahk:=Ahk ? Ahk:A_IsCompiled ? A_ScriptDir "\AutoHotkey.exe":A_AhkPath
 		  s:="`nDllCall(`"SetWindowText`",`"Ptr`",A_ScriptHwnd,`"Str`",`"<AHK>`")`n"
 		  . "`n`n" . StrReplace(s, "`r")
@@ -1480,7 +1444,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  ToolTip(s:="", x:="", y:="", num:=1, arg:="")
 	  {
-	  ; REMOVED:   local
 		static ini:=Map(), ToolTipOff:=""
 		f:= "ToolTip_" . Round(num)
 		if (s="")
@@ -1538,31 +1501,30 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  ; FindText().ObjView()  view object values for Debug
   
-	  ObjView(obj, keyname:="")
+	  ObjView(obj, keyname:="", *)
 	  {
-	  ; REMOVED:   local
+		static Gui_DeBug_Gui
+		if obj = "Hide"
+			return Gui_DeBug_Gui.Hide()
 		if IsObject(obj)  ; thanks lexikos's type(v)
 		{
 		  s:=""
-		  For k,v in obj
-			s.=this.ObjView(v, keyname "[" (StrLen(k)>1000
-			|| [k].GetCapacity(1) ? "`"" k "`"":k) "]")
+		  For k,v in (HasMethod(obj,"__Enum") ? obj : obj.OwnProps())
+			s.=this.ObjView(v, keyname "[" (k is Number ? k : "`"" k "`"") "]")
 		}
 		else
-		  s:=keyname ": " (StrLen(obj)>1000
-		  || [obj].GetCapacity(1) ? "`"" obj "`"":obj) "`n"
+		  s:=keyname ": " (obj is Number ? obj : "`"" obj "`"") "`n"
 		if (keyname!="")
 		  return s
 		;------------------
-		Gui_DeBug_Gui.Destroy()
-		Gui_DeBug_Gui := Gui()
-		Gui_DeBug_Gui.Opt("+AlwaysOnTop")
-		Gui_DeBug_Gui.Add("Button", "y270 w350 Default", "OK")
-		.OnEvent("Click", Gui_DeBug_Gui.Hide)
+		if IsSet(Gui_DeBug_Gui)
+			Gui_DeBug_Gui.Destroy()
+		Gui_DeBug_Gui := Gui("+AlwaysOnTop", "Debug view object values")
+		Gui_DeBug_Gui.Add("Button", "y270 w350 Default", "OK").OnEvent("Click", this.ObjView.Bind(this, "Hide"))
 		Gui_DeBug_Gui.Add("Edit", "xp y10 w350 h250 -Wrap -WantReturn").Value := s
-		Gui_DeBug_Gui.Show(, "Debug view object values")
+		Gui_DeBug_Gui.Show()
 		DetectHiddenWindows(false)
-		WinWaitClose("ahk_id " Gui_DeBug_Gui.Hwnd)
+		WinWaitClose(Gui_DeBug_Gui.Hwnd)
 		Gui_DeBug_Gui.Destroy()
 	  }
   
@@ -1778,7 +1740,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
   
 	  Gui(cmd, arg1:="", args*)
 	  {
-	  ; REMOVED:   local
 		static
 		local cri
 		static init:=0
@@ -1801,7 +1762,7 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  Gui_SaveScr := this.Gui.Bind(this, "SaveScr")
 		  cri:=A_IsCritical
 		  Critical()
-	  ; REMOVED:     #NoEnv
+
 		  Gui_("Load_Language_Text")
 		  Gui_("MakeCaptureWindow")
 		  Gui_("MakeMainWindow")
@@ -2167,7 +2128,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		   }
 		  ww:=w, hh:=h, nW:=2*ww+1, nH:=2*hh+1
 		  i:=nW>71, j:=nH>25
-		  ;FindText_Capture.Default()
 		  ogcMySlider1.Enabled := i
 		  ogcMySlider2.Enabled := j
 		  ogcMySlider1.Value := MySlider1:=0
@@ -2175,8 +2135,8 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  ;------------------------
 		  Gui_("getcors", !ShowScreenShot)
 		  Gui_("Reset")
-		  ;Loop 6
-		  ;  ogcEdit%A_Index%.Value := "" ; NOTE: I have no clue what these edits are
+		  for _, ind in ["SelGray", "SelColor", "SelR", "SelG", "SelB", "Threshold"]
+		    ogcEdit%ind%.Value := ""
 		  ogcCheckboxModify.Value := Modify:=0
 		  ogcCheckboxMultiColor.Value := MultiColor:=0
 		  ogcEditGrayDiff.Value := 50
@@ -2190,7 +2150,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  ErrorLevel := WinWaitClose("ahk_id " WinExist()) , ErrorLevel := ErrorLevel = 0 ? 1 : 0
 		  Critical()
 		  ToolTip()
-		  ;FindText_Main.Default()
 		  ;--------------------------------
 		  if (cors.Has("bind") && cors.bind!="")
 		  {
@@ -2198,7 +2157,7 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 			tc := WinGetClass("ahk_id " Bind_ID)
 			tt:=Trim(SubStr(tt, 1, 30) (tc ? " ahk_class " tc:""))
 			tt:=StrReplace(RegExReplace(tt, "[;``]", "``$0"), "`"","`"`"") ; "
-			result:="`nSetTitleMatchMode, 2`nid:=WinExist(`"" tt "`")"
+			result:="`nSetTitleMatchMode(2)`nid:=WinExist(`"" tt "`")"
 			. "`nFindText().BindWindow(id" (cors.bind=0 ? "":"," cors.bind)
 			. ")  `; " Lang["s6"] " this.BindWindow(0)`n`n" result
 		  }
@@ -2406,7 +2365,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  if (!show_gui)
 			return StrSplit(p, ",", " ")
 		  ;---------------------
-		  ;FindText_Main.Default()
 		  s := ogcEditscr.Value
 		  re:="i)(=FindText\([^\n]*?)([^,\n]*,){4}"
 		  . "([^,\n]*,[^,\n]*,[^,\n]*Text)"
@@ -2418,7 +2376,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  FindText_Main.Show()
 		  return
 		Case "Test","TestClip":
-		  ;FindText_Main.Default()
 		  FindText_Main.Opt("+LastFound")
 		  WinMinimize()
 		  FindText_Main.Hide()
@@ -2462,7 +2419,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  FindText_Main.Hide()
 		  FindText_Capture.Opt("+LastFound")
 		  Gui_("Capture")
-		  ;FindText_Main.Default()
 		  if (cmd="GetOffset")
 			s := ogcEditscr.Value
 		  else
@@ -2493,7 +2449,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  A_Clipboard:=s
 		  return
 		Case "Copy":
-		  ;FindText_Main.Default()
 		  s := EditGetSelectedText(hscr)
 		  if (s="")
 		  {
@@ -2508,7 +2463,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  ogcEditscr.Focus()
 		  return
 		Case "Apply":
-		  ;FindText_Main.Default()
 		  NowHotkey := ogcEditNowHotkey.Text
 		  SetHotkey1 := ogcSetHotkey1.Text
 		  SetHotkey2 := ogcDDLSetHotkey2.Text
@@ -2735,7 +2689,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 			Gui_("CutD")
 		  return
 		Case "Gray2Two":
-		  ;FindText_Capture.Default()
 		  ogcEditThreshold.Focus()
 		  Threshold := ogcEditThreshold.Text
 		  if (Threshold="")
@@ -2775,7 +2728,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  bg:=i>0 ? "1":"0"
 		  return
 		Case "GrayDiff2Two":
-		  ;FindText_Capture.Default()
 		  GrayDiff := ogcEditGrayDiff.Text
 		  if (GrayDiff="")
 		  {
@@ -2806,7 +2758,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  bg:=i>0 ? "1":"0"
 		  return
 		Case "Color2Two","ColorPos2Two":
-		  ;FindText_Capture.Default()
 		  c := ogcEditSelColor.Text
 		  if (c="")
 		  {
@@ -2830,7 +2781,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  bg:=i>0 ? "1":"0"
 		  return
 		Case "ColorDiff2Two":
-		  ;FindText_Capture.Default()
 		  c := ogcEditSelColor.Text
 		  if (c="")
 		  {
@@ -2908,7 +2858,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  txt:=""
 		  return
 		Case "OK","SplitAdd","AllAdd":
-		  ;FindText_Capture.Default()
 		  FindText_Capture.Opt("+OwnDialogs")
 		  Gui_("GetTxt")
 		  if (txt="") and (!MultiColor)
@@ -3051,7 +3000,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 			return Gui_("KeyDown")
 		  if (k1:=Cid_.Has(k2)?Round(Cid_[k2]):0)<1
 			return
-		  ;FindText_Capture.Default()
 		  if (k1>71*25)
 		  {
 			k3:=nW*nH+(k1-71*25)+dx
@@ -3106,7 +3054,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  ToolTip()
 		  return
 		Case "CutL2","CutR2","CutU2","CutD2":
-		  ;FindText_Main.Default()
 		  s := ogcEditMyPic.Value
 		  s:=Trim(s,"`n") . "`n", v:=SubStr(cmd, 4, 1)
 		  if (v="U")
@@ -3120,7 +3067,6 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  ogcEditMyPic.Value := Trim(s,"`n")
 		  return
 		Case "Update":
-		  ;FindText_Main.Default()
 		  ;ogcEditscr.Focus()
 		  i := EditGetCurrentLine(hscr)
 		  s := EditGetLine(i, hscr)
