@@ -2206,8 +2206,8 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  {
 			if (!A_IsCompiled)
 			{
-			  s := Fileread(A_LineFile)
-			  s:=SubStr(s, (s~="i)\n[;=]+ Copy The")<1 ? (s~="i)\n[;=]+ Copy The")-1 : (s~="i)\n[;=]+ Copy The"))
+			  s:=Fileread(A_LineFile)
+			  s:=SubStr(s, (s~="i)\n[\s;=]+ Copy The")<1 ? (s~="i)\n[\s;=]+ Copy The")-1 : (s~="i)\n[\s;=]+ Copy The"))
 			}
 			else s:=""
 			ogcEditscr.Value := result "`n" s
@@ -2445,17 +2445,13 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 			, RegExMatch(s, "<[^>\n]*>[^$\n]+\$[^`"\r\n]+", &r) ;"   
 			, v:=this.FindText(&X, &Y, -n, -n, n, n, 0, 0, r[])
 			, r:=StrSplit(Lang["s8"],"|")
-			if v {
-			  MsgBox(r[1] ":`t" Round(v.Length) "`n`n"
-				. r[2] ":`t" (A_TickCount-t) " " r[3] "`n`n"
-				. r[4] ":`t" X ", " Y "`n`n"
-				. r[5] ":`t<" (Comment:=v[1].id) ">", "Tip", "4096 T3")
-			  for i,j in v
-				if (i<=2)
-				  this.MouseTip(j.x, j.y)
-			} else
-			  MsgBox(r[1] ":`t0`n`n"
-				. r[2] ":`t" (A_TickCount-t) " " r[3] "`n`n", "Tip", "4096 T3")
+			MsgBox(r[1] ":`t" Round(v.Length) "`n`n"
+			. r[2] ":`t" (A_TickCount-t) " " r[3] "`n`n"
+			. (v.Length ? r[4] ":`t" X ", " Y "`n`n"
+			. r[5] ":`t<" (Comment:=v[1].id) ">" : ""), "Tip", "4096 T3")
+			for i,j in v
+			if (i<=2)
+				this.MouseTip(j.mx, j.my)
 			v:="", A_Clipboard:=X "," Y
 		  }
 		  ;----------------------
@@ -3014,16 +3010,13 @@ if (!A_IsCompiled and A_LineFile=A_ScriptFullPath)
 		  . "`n}`n"
 		  . "`n`; ok:=FindText(&X:=`"wait`", &Y:=3, 0,0,0,0,0,0,Text)    `; " r[7]
 		  . "`n`; ok:=FindText(&X:=`"wait0`", &Y:=-1, 0,0,0,0,0,0,Text)  `; " r[8]
-		  . "`n`nif ok {`n"
-		  . "  MsgBox(`"" r[1] ":``t`" Round(ok.Length)"
+		  . "`n`nMsgBox(`"" r[1] ":``t`" Round(ok.Length)"
 		  . "`n  . `"``n``n" r[2] ":``t`" (A_TickCount-t1) `" " r[3] "`""
-		  . "`n  . `"``n``n" r[4] ":``t`" ok[1].x `", `" ok[1].y"
-		  . "`n  . `"``n``n" r[5] ":``t<`" (Comment:=ok[1].id) `">`", `"Tip`", 4096)`n"
-		  . "`n  for i,v in ok  `; ok " r[6] " ok:=FindText().ok"
-		  . "`n    if (i<=2)"
-		  . "`n      FindText().MouseTip(ok[i].x, ok[i].y)`n"
-		  . "} else`n  MsgBox(`"" r[1] ":``t0`"" 
-		  . "`n  . `"``n``n" r[2] ":``t`" (A_TickCount-t1) `" " r[3] "`", `"Tip`", 4096)`n"
+		  . "`n  . (ok.Length ? `"``n``n" r[4] ":``t`" ok[1].mx `", `" ok[1].my"
+		  . "`n  . `"``n``n" r[5] ":``t<`" (Comment:=ok[1].id) `">`" : `"`"), `"Tip`", 4096)`n"
+		  . "`nfor i,v in ok  `; ok " r[6] " ok:=FindText().ok"
+		  . "`n  if (i<=2)"
+		  . "`n    FindText().MouseTip(ok[i].mx, ok[i].my)`n"
 		  Event:=cmd, result:=s
 		  FindText_Capture.Hide()
 		  return
